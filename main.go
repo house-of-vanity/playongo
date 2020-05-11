@@ -22,7 +22,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var version string = "0.5.0"
+var version string = "0.6.0"
 
 var musicDir string
 var static string = "/static/"
@@ -214,6 +214,21 @@ func readMeta(path string, wg *sync.WaitGroup, mux *sync.Mutex) {
 			Path:     relativePathNoSpaces.String(),
 			Size:     file_size})
 		mux.Unlock()
+  } else if strings.HasSuffix(path, "cue") {
+		fmt.Printf("It's CUE file: %q.\n", path)
+		mux.Lock()
+		addSong(song{
+			ID:       md5sum,
+			Name:     "",
+			Artist:   "",
+			Album:    "",
+			Genre:    "",
+			Year:     0,
+			Format:   "",
+			FileType: "",
+			Path:     relativePathNoSpaces.String(),
+			Size:     file_size})
+		mux.Unlock()
 	} else {
 		fmt.Printf("Empty metadata: %q.\n", path)
 	}
@@ -323,6 +338,7 @@ func main() {
 	var scan bool
 	var database string
 
+	fmt.Printf("Playongo version %q \n", version)
 	flag.BoolVar(&scan, "scan", false, "scan media files")
 	flag.StringVar(&musicDir, "musicDir", ".", "the directory to serve files from. Defaults to the current dir")
 	flag.StringVar(&database, "database", "media.db", "path to sqlite database file")
