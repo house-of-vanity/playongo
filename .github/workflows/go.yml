@@ -2,9 +2,9 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - '*-release' # Push events to matching v*, i.e. v1.0, v20.15.10
 
 jobs:
 
@@ -29,7 +29,6 @@ jobs:
             curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
             dep ensure
         fi
-
     - name: Build
       run: go build -v .
     - name: Upload binary
